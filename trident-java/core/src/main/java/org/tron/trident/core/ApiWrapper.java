@@ -143,7 +143,7 @@ public class ApiWrapper implements Api {
   public final ManagedChannel channelSolidity;
 
   /**
-   * Specify whether to createTransaction locally (default false) without grpc request. If true, we
+   * Specify whether to createTransaction locally (default false) without grpc request. If false, we
    * need to query referHeadBlockId and head block time through grpc api in method
    * {@link #createTransaction}. {@link #referHeadBlockId} and {@link #expireTimeStamp} must be
    * valid when it is true.
