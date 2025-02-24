@@ -347,7 +347,7 @@ class ContractTest extends BaseTest {
     long refBlockNum = new Random().nextInt(100);
     byte[] refBlockNumBytes = ByteArray.fromLong(refBlockNum);
     long timestamp = System.currentTimeMillis();
-    client.setCreateTransactionLocal(true);
+    client.setEnableLocalCreateTransaction(true);
 
     try {
       client.transferTrc10(testAddress,
@@ -367,7 +367,7 @@ class ContractTest extends BaseTest {
         transactionExtention.getTransaction().getRawData().getRefBlockBytes().toByteArray());
     assertEquals(timestamp, transactionExtention.getTransaction().getRawData().getExpiration());
 
-    client.setCreateTransactionLocal(false);
+    client.setEnableLocalCreateTransaction(false);
     transactionExtention = client.transferTrc10(testAddress,
         "TAB1TVw5N8g1FLcKxPD17h2A3eEpSXvMQd", Integer.parseInt(tokenId), 100);
 

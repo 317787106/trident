@@ -151,10 +151,10 @@ public class ApiWrapper implements Api {
    */
   @Getter
   @Setter
-  boolean createTransactionLocal = false;
+  boolean enableLocalCreateTransaction = false;
   /**
    * Used to set refer block number and hash when {@link #createTransaction} only if
-   * {@link #createTransactionLocal} = true. If false, use the highest solidity BlockId instead.
+   * {@link #enableLocalCreateTransaction} = true. If false, use the highest solidity BlockId instead.
    * Use {@link #resetRefer()} to reset.
    */
   @Getter
@@ -162,7 +162,7 @@ public class ApiWrapper implements Api {
   private BlockId referHeadBlockId;
   /**
    * Used to set transaction's expiration timestamp (milliseconds) when {@link #createTransaction} only if
-   * {@link #createTransactionLocal} = true. If false, use the timestamp of latest head BlockId +
+   * {@link #enableLocalCreateTransaction} = true. If false, use the timestamp of latest head BlockId +
    * TRANSACTION_DEFAULT_EXPIRATION_TIME instead. Use {@link #resetExpireTimeStamp()} to reset.
    */
   @Getter
@@ -472,7 +472,7 @@ public class ApiWrapper implements Api {
       Message message, Transaction.Contract.ContractType contractType) throws Exception {
     BlockId solidHeadBlockId;
     long transactionExpireTimeStamp;
-    if (createTransactionLocal) {
+    if (enableLocalCreateTransaction) {
       if (referHeadBlockId == null) {
         throw new NullPointerException("referHeadBlockId must not be null");
       }
