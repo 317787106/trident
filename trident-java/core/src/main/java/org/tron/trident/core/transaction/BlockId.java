@@ -1,5 +1,7 @@
 package org.tron.trident.core.transaction;
 
+import com.google.common.primitives.Longs;
+import com.google.protobuf.ByteString;
 import java.util.Arrays;
 import org.tron.trident.core.utils.Sha256Hash;
 
@@ -7,11 +9,33 @@ public class BlockId extends Sha256Hash {
 
   private long num;
 
+  public BlockId() {
+    super(Sha256Hash.ZERO_HASH.getBytes());
+    num = 0;
+  }
+
+  public BlockId(Sha256Hash blockId) {
+    super(blockId.getBytes());
+    byte[] blockNum = new byte[8];
+    System.arraycopy(blockId.getBytes(), 0, blockNum, 0, 8);
+    num = Longs.fromByteArray(blockNum);
+  }
+
   /**
    * Use {@link #wrap(byte[])} instead.
    */
   public BlockId(Sha256Hash hash, long num) {
     super(num, hash);
+    this.num = num;
+  }
+
+  public BlockId(byte[] hash, long num) {
+    super(num, hash);
+    this.num = num;
+  }
+
+  public BlockId(ByteString hash, long num) {
+    super(num, hash.toByteArray());
     this.num = num;
   }
 

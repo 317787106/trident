@@ -344,11 +344,12 @@ class ContractTest extends BaseTest {
   @Test
   void testRefer() throws IllegalException {
     byte[] rawHashBytes = getBlockId();
-    long refBlockNum = new Random().nextInt(100);
-    byte[] refBlockNumBytes = ByteArray.fromLong(refBlockNum);
+    BlockId blockId = new BlockId(Sha256Hash.wrap(rawHashBytes));
+    byte[] refBlockNumBytes = ByteArray.fromLong(blockId.getNum());
     long timestamp = System.currentTimeMillis();
-    client.setEnableLocalCreateTransaction(true);
 
+    //enable but invalid blockId
+    client.enableLocalCreate(null, 1);
     try {
       client.transferTrc10(testAddress,
           "TAB1TVw5N8g1FLcKxPD17h2A3eEpSXvMQd", Integer.parseInt(tokenId), 100);
@@ -357,8 +358,8 @@ class ContractTest extends BaseTest {
       assert true;
     }
 
-    client.setReferHeadBlockId(new BlockId(Sha256Hash.wrap(rawHashBytes), refBlockNum));
-    client.setExpireTimeStamp(timestamp); //ms
+    //enable but valid blockId and timestamp
+    client.enableLocalCreate(blockId, timestamp);
     TransactionExtention transactionExtention = client.transferTrc10(testAddress,
         "TAB1TVw5N8g1FLcKxPD17h2A3eEpSXvMQd", Integer.parseInt(tokenId), 100);
     assertArrayEquals(ByteArray.subArray(rawHashBytes, 8, 16),
@@ -367,19 +368,35 @@ class ContractTest extends BaseTest {
         transactionExtention.getTransaction().getRawData().getRefBlockBytes().toByteArray());
     assertEquals(timestamp, transactionExtention.getTransaction().getRawData().getExpiration());
 
-    client.setEnableLocalCreateTransaction(false);
+    //enable but invalid blockId
+    client.setReferHeadBlockId(null);
+    try {
+      client.transferTrc10(testAddress,
+          "TAB1TVw5N8g1FLcKxPD17h2A3eEpSXvMQd", Integer.parseInt(tokenId), 100);
+      assert false;
+    } catch (Exception e) {
+      assert true;
+    }
+
+    //disable but set timestamp
+    client.disableLocalCreate();
+    try {
+      client.setExpireTimeStamp(100L);
+      assert false;
+    } catch (Exception e) {
+      assert true;
+    }
+
+    //disable
     transactionExtention = client.transferTrc10(testAddress,
         "TAB1TVw5N8g1FLcKxPD17h2A3eEpSXvMQd", Integer.parseInt(tokenId), 100);
-
     assertNotEquals(
         ByteArray.toHexString(ByteArray.subArray(rawHashBytes, 8, 16)),
         ByteArray.toHexString(
             transactionExtention.getTransaction().getRawData().getRefBlockHash().toByteArray()));
-
     assertNotEquals(ByteArray.toHexString(ByteArray.subArray(refBlockNumBytes, 6, 8)),
         ByteArray.toHexString(
             transactionExtention.getTransaction().getRawData().getRefBlockBytes().toByteArray()));
-
     assertNotEquals(timestamp, transactionExtention.getTransaction().getRawData().getExpiration());
   }
 

@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
-import lombok.Setter;
 import org.bouncycastle.jcajce.provider.digest.SHA256;
 import org.tron.trident.abi.FunctionEncoder;
 import org.tron.trident.abi.datatypes.Function;
@@ -150,23 +149,19 @@ public class ApiWrapper implements Api {
    * valid when it is true.
    */
   @Getter
-  @Setter
-  boolean enableLocalCreateTransaction = false;
+  private boolean enableLocalCreateTx = false;
   /**
    * Used to set refer block number and hash when {@link #createTransaction} only if
-   * {@link #enableLocalCreateTransaction} = true. If false, use the highest solidity BlockId instead.
-   * Use {@link #resetRefer()} to reset.
+   * {@link #enableLocalCreateTx} = true. If false, use the highest solidity BlockId instead.
    */
   @Getter
-  @Setter
   private BlockId referHeadBlockId;
   /**
    * Used to set transaction's expiration timestamp (milliseconds) when {@link #createTransaction} only if
-   * {@link #enableLocalCreateTransaction} = true. If false, use the timestamp of latest head BlockId +
-   * TRANSACTION_DEFAULT_EXPIRATION_TIME instead. Use {@link #resetExpireTimeStamp()} to reset.
+   * {@link #enableLocalCreateTx} = true. If false, use the timestamp of latest head BlockId +
+   * TRANSACTION_DEFAULT_EXPIRATION_TIME instead.
    */
   @Getter
-  @Setter
   private long expireTimeStamp = -1;
 
   public ApiWrapper(String grpcEndpoint, String grpcEndpointSolidity, String hexPrivateKey) {
@@ -293,15 +288,32 @@ public class ApiWrapper implements Api {
     return new ApiWrapper(Constant.FULLNODE_NILE, Constant.FULLNODE_NILE_SOLIDITY, hexPrivateKey);
   }
 
-  /**
-   * clear the referHeadBlockId.
-   */
-  public void resetRefer() {
-    referHeadBlockId = null;
+  public void enableLocalCreate(BlockId blockId, long expireTime) {
+    this.enableLocalCreateTx = true;
+    this.referHeadBlockId = blockId;
+    this.expireTimeStamp = expireTime;
   }
 
-  public void resetExpireTimeStamp() {
+  public void disableLocalCreate() {
+    this.enableLocalCreateTx = false;
+    referHeadBlockId = null;
     expireTimeStamp = -1;
+  }
+
+  public synchronized void setReferHeadBlockId(BlockId blockId) {
+    if (!enableLocalCreateTx) {
+      throw new RuntimeException(
+          "Must enable local create transaction before set referHeadBlockId");
+    }
+    referHeadBlockId = blockId;
+  }
+
+  public synchronized void setExpireTimeStamp(long expireTime) {
+    if (!enableLocalCreateTx) {
+      throw new RuntimeException(
+          "Must enable local create transaction before set expireTimeStamp");
+    }
+    expireTimeStamp = expireTime;
   }
 
   /**
@@ -472,12 +484,12 @@ public class ApiWrapper implements Api {
       Message message, Transaction.Contract.ContractType contractType) throws Exception {
     BlockId solidHeadBlockId;
     long transactionExpireTimeStamp;
-    if (enableLocalCreateTransaction) {
+    if (enableLocalCreateTx) {
       if (referHeadBlockId == null) {
-        throw new NullPointerException("referHeadBlockId must not be null");
+        throw new RuntimeException("referHeadBlockId must not be null");
       }
       if (expireTimeStamp <= 0) {
-        throw new Exception("expireTimeStamp must be > 0");
+        throw new RuntimeException("expireTimeStamp must be > 0");
       }
       solidHeadBlockId = referHeadBlockId;
       transactionExpireTimeStamp = expireTimeStamp;
