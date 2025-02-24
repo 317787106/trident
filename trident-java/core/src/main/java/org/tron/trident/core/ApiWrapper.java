@@ -288,16 +288,16 @@ public class ApiWrapper implements Api {
     return new ApiWrapper(Constant.FULLNODE_NILE, Constant.FULLNODE_NILE_SOLIDITY, hexPrivateKey);
   }
 
-  public void enableLocalCreate(BlockId blockId, long expireTime) {
+  public synchronized void enableLocalCreate(BlockId blockId, long expireTime) {
     this.enableLocalCreateTx = true;
     this.referHeadBlockId = blockId;
     this.expireTimeStamp = expireTime;
   }
 
-  public void disableLocalCreate() {
+  public synchronized void disableLocalCreate() {
     this.enableLocalCreateTx = false;
-    referHeadBlockId = null;
-    expireTimeStamp = -1;
+    this.referHeadBlockId = null;
+    this.expireTimeStamp = -1;
   }
 
   public synchronized void setReferHeadBlockId(BlockId blockId) {
