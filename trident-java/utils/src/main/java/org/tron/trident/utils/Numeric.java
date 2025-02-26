@@ -16,7 +16,6 @@ package org.tron.trident.utils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
-
 import org.tron.trident.exceptions.MessageDecodingException;
 import org.tron.trident.exceptions.MessageEncodingException;
 

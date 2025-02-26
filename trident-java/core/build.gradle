@@ -11,6 +11,9 @@ def grpcVersion = '1.60.0'
 configurations.all {
     resolutionStrategy {
         force("com.squareup.okio:okio:3.9.0")
+        force("io.netty:netty-codec-http:4.1.111.Final")
+        force("io.netty:netty-common:4.1.118.Final")
+        force("io.netty:netty-handler:4.1.118.Final")
     }
 }
 

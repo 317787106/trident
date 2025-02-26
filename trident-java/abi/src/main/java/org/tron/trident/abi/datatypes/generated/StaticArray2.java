@@ -1,7 +1,6 @@
 package org.tron.trident.abi.datatypes.generated;
 
 import java.util.List;
-
 import org.tron.trident.abi.datatypes.StaticArray;
 import org.tron.trident.abi.datatypes.Type;
 
