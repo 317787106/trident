@@ -59,7 +59,7 @@ class ApiWrapperTest extends BaseTest {
   @Test
   void testGetNowBlockQueryWithTimeout() throws IllegalException, InterruptedException {
     List<ClientInterceptor> clientInterceptors = new ArrayList<>();
-    int timeout = 2000;
+    int timeout = 4000;
     ApiWrapper client = new ApiWrapper(Constant.FULLNODE_NILE, Constant.FULLNODE_NILE_SOLIDITY,
         KeyPair.generate().toPrivateKey(), clientInterceptors,
         timeout);
@@ -68,9 +68,26 @@ class ApiWrapperTest extends BaseTest {
     //System.out.println(block.getBlockHeader());
     assertTrue(block.getBlockHeader().getRawDataOrBuilder().getNumber() > 0);
 
-    sleep(timeout + 10000);
+    sleep(timeout + timeout);
     try {
       client.getNowBlock();
+    } catch (io.grpc.StatusRuntimeException e) {
+      assert false;
+    }
+  }
+
+  @Test
+  void testBlockingStubWithTimeout() throws IllegalException, InterruptedException {
+    List<ClientInterceptor> clientInterceptors = new ArrayList<>();
+    int timeout = 4000;
+    ApiWrapper client = new ApiWrapper(Constant.FULLNODE_NILE, Constant.FULLNODE_NILE_SOLIDITY,
+        KeyPair.generate().toPrivateKey(), clientInterceptors,
+        timeout);
+    client.blockingStub.getNowBlock(EmptyMessage.newBuilder().build());
+
+    sleep(timeout + timeout);
+    try {
+      client.blockingStub.getNowBlock(EmptyMessage.newBuilder().build());
     } catch (io.grpc.StatusRuntimeException e) {
       assert false;
     }
