@@ -1,5 +1,6 @@
 package org.tron.trident.core;
 
+import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -16,7 +17,6 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.tron.trident.abi.FunctionEncoder;
@@ -57,15 +57,23 @@ class ApiWrapperTest extends BaseTest {
   }
 
   @Test
-  void testGetNowBlockQueryWithTimeout() throws IllegalException {
+  void testGetNowBlockQueryWithTimeout() throws IllegalException, InterruptedException {
     List<ClientInterceptor> clientInterceptors = new ArrayList<>();
+    int timeout = 2000;
     ApiWrapper client = new ApiWrapper(Constant.FULLNODE_NILE, Constant.FULLNODE_NILE_SOLIDITY,
         KeyPair.generate().toPrivateKey(), clientInterceptors,
-        2000);
+        timeout);
     Chain.Block block = client.getNowBlock();
 
     //System.out.println(block.getBlockHeader());
     assertTrue(block.getBlockHeader().getRawDataOrBuilder().getNumber() > 0);
+
+    sleep(timeout + 10000);
+    try {
+      client.getNowBlock();
+    } catch (io.grpc.StatusRuntimeException e) {
+      assert false;
+    }
   }
 
   @Test
