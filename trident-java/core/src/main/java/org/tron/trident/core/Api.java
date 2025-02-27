@@ -217,6 +217,8 @@ public interface Api {
 
   Account getAccountSolidity(String address);
 
+  TransactionInfoList getTransactionInfoByBlockNumSolidity(long blockNum) throws IllegalException;
+
   BlockExtention getNowBlockSolidity() throws IllegalException;
 
   Transaction getTransactionByIdSolidity(String txID) throws IllegalException;
@@ -313,7 +315,7 @@ public interface Api {
 
   BlockExtention getBlock(String blockIDOrNum, boolean detail);
 
-  BlockExtention getBlock();
+  BlockExtention getBlock(boolean detail);
 
   Block getBlockByIdOrNum(String blockIDOrNum);
 

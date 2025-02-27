@@ -16,7 +16,6 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.tron.trident.abi.FunctionEncoder;
@@ -43,6 +42,7 @@ import org.tron.trident.proto.Response.Proposal;
 import org.tron.trident.proto.Response.ProposalList;
 import org.tron.trident.proto.Response.SmartContractDataWrapper;
 import org.tron.trident.proto.Response.TransactionExtention;
+import org.tron.trident.proto.Response.TransactionInfoList;
 import org.tron.trident.proto.Response.TransactionReturn;
 
 @Disabled("add private key to enable this case")
@@ -126,7 +126,7 @@ class ApiWrapperTest extends BaseTest {
     blockExtention = client.getBlock("53506161", false);
     assertEquals(0, blockExtention.getTransactionsList().size());
 
-    blockExtention = client.getBlock();
+    blockExtention = client.getBlock(false);
     assertEquals(0, blockExtention.getTransactionsList().size());
   }
 
@@ -279,5 +279,31 @@ class ApiWrapperTest extends BaseTest {
 //    System.out.println("specified amount: " + amount2);
     assertTrue(amount1 >= 0);
     assertTrue(amount2 >= 0);
+  }
+
+  @Test
+  void testGetTransactionInfoByBlockNum() {
+    try {
+      TransactionInfoList transactionInfoList = client.getTransactionInfoByBlockNum(54829146);
+      assertEquals(0, transactionInfoList.getTransactionInfoCount());
+      transactionInfoList = client.getTransactionInfoByBlockNum(54829147);
+      assertTrue(transactionInfoList.getTransactionInfoCount() > 0);
+    } catch (IllegalException e) {
+      assert false;
+    }
+  }
+
+  @Test
+  void testGetTransactionInfoByBlockNumSolidity() {
+    try {
+      TransactionInfoList transactionInfoList =
+          client.getTransactionInfoByBlockNumSolidity(54829146);//nile
+      assertEquals(0, transactionInfoList.getTransactionInfoCount());
+      transactionInfoList =
+          client.getTransactionInfoByBlockNumSolidity(54829147);//nile
+      assertTrue(transactionInfoList.getTransactionInfoCount() > 0);
+    } catch (IllegalException e) {
+      assert false;
+    }
   }
 }

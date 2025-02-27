@@ -1246,14 +1246,11 @@ public class ApiWrapper implements Api {
    */
   @Override
   public TransactionInfoList getTransactionInfoByBlockNum(long blockNum) throws IllegalException {
-    NumberMessage numberMessage = NumberMessage.newBuilder().setNum(blockNum).build();
-    TransactionInfoList transactionInfoList = blockingStub.getTransactionInfoByBlockNum(
-        numberMessage);
-    if (transactionInfoList.getTransactionInfoCount() == 0) {
-      throw new IllegalException("no transactions or the blockNum is incorrect.");
+    if (blockNum < 0) {
+      throw new IllegalException();
     }
-
-    return transactionInfoList;
+    NumberMessage numberMessage = NumberMessage.newBuilder().setNum(blockNum).build();
+    return blockingStub.getTransactionInfoByBlockNum(numberMessage);
   }
 
   /**
@@ -1831,6 +1828,20 @@ public class ApiWrapper implements Api {
         .setAddress(bsAddress)
         .build();
     return blockingStubSolidity.getAccount(accountAddressMessage);
+  }
+
+  /**
+   * Get transactionInfo from block number
+   *
+   * @param blockNum The block height
+   * @return TransactionInfoList
+   * @throws IllegalException no transactions or the blockNum is incorrect
+   */
+  @Override
+  public TransactionInfoList getTransactionInfoByBlockNumSolidity(long blockNum)
+      throws IllegalException {
+    NumberMessage numberMessage = NumberMessage.newBuilder().setNum(blockNum).build();
+    return blockingStubSolidity.getTransactionInfoByBlockNum(numberMessage);
   }
 
   /**
@@ -2573,12 +2584,14 @@ public class ApiWrapper implements Api {
   }
 
   /**
-   * get latest block header, no transactions are contained.
+   * get latest block extension
+   *
+   * @param detail specify whether to contains transaction in BlockExtention
    */
   @Override
-  public BlockExtention getBlock() {
+  public BlockExtention getBlock(boolean detail) {
     BlockReq blockReq = BlockReq.newBuilder()
-        .setDetail(false)
+        .setDetail(detail)
         .build();
     return blockingStub.getBlock(blockReq);
   }

@@ -33,7 +33,7 @@ public class TimeoutInterceptorTest {
     );
 
     try {
-      client.getBlock();
+      client.getBlock(false);
       fail("Except DEADLINE_EXCEEDED Exception");
 
     } catch (Exception e) {
@@ -60,7 +60,7 @@ public class TimeoutInterceptorTest {
     );
 
     try {
-      BlockExtention blockExtention = client.getBlock();
+      BlockExtention blockExtention = client.getBlock(false);
       System.out.println(blockExtention.getBlockHeader().getRawData().getNumber());
       fail("Except DEADLINE_EXCEEDED Exception");
 
@@ -85,7 +85,7 @@ public class TimeoutInterceptorTest {
 
     for (int i = 0; i < 2; i++) {
       assertDoesNotThrow(() -> {
-        clientDefault.getBlock();
+        clientDefault.getBlock(false);
         sleep(10_000L);
       });
     }
