@@ -125,7 +125,7 @@ subprojects {
         transitive = false
     }
     checkstyle {
-        toolVersion = "8.7"
+        toolVersion = "8.29"
         configFile = file("../config/checkstyle/checkStyleAll.xml")
     }
     checkstyleMain {

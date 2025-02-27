@@ -284,9 +284,9 @@ class ApiWrapperTest extends BaseTest {
   @Test
   void testGetTransactionInfoByBlockNum() {
     try {
-      TransactionInfoList transactionInfoList = client.getTransactionInfoByBlockNum(54829146);
+      TransactionInfoList transactionInfoList = client.getTransactionInfoByBlockNum(54829146);//nile
       assertEquals(0, transactionInfoList.getTransactionInfoCount());
-      transactionInfoList = client.getTransactionInfoByBlockNum(54829147);
+      transactionInfoList = client.getTransactionInfoByBlockNum(54829147);//nile
       assertTrue(transactionInfoList.getTransactionInfoCount() > 0);
     } catch (IllegalException e) {
       assert false;
@@ -302,6 +302,16 @@ class ApiWrapperTest extends BaseTest {
       transactionInfoList =
           client.getTransactionInfoByBlockNumSolidity(54829147);//nile
       assertTrue(transactionInfoList.getTransactionInfoCount() > 0);
+    } catch (IllegalException e) {
+      assert false;
+    }
+  }
+
+  @Test
+  void testGetTransactionById() {
+    try {
+      client.getTransactionById(
+          "82e0b2120c7c8b4e3abe99723e9d9498e0b6c9a137ff761d43d0625914e11990");//nile
     } catch (IllegalException e) {
       assert false;
     }

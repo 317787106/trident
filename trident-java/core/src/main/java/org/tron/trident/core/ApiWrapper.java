@@ -306,6 +306,12 @@ public class ApiWrapper implements Api {
     return new ApiWrapper(Constant.FULLNODE_NILE, Constant.FULLNODE_NILE_SOLIDITY, hexPrivateKey);
   }
 
+  /**
+   * enable local create transaction.
+   * @param blockId refer blockId used in createTransaction. It will be invalid after 65535 blocks
+   * so remember to update it timely.
+   * @param expireTime transaction's absolute expire timestamp in createTransaction, milliseconds.
+   */
   public synchronized void enableLocalCreate(BlockId blockId, long expireTime) {
     this.enableLocalCreateTx = true;
     this.referHeadBlockId = blockId;
@@ -2092,9 +2098,9 @@ public class ApiWrapper implements Api {
    * @param ownerAddress the current caller
    * @param contractAddress smart contract address
    * @param callData the encoded function call data
-   * @param callValue the amount of sun send to contract
-   * @param tokenValue the amount of tokenId
-   * @param tokenId tokenId
+   * @param callValue the amount of sun send to contract. If not used, set 0
+   * @param tokenValue the amount of tokenId. If not used, set 0
+   * @param tokenId tokenId. If not used, set null
    * @param feeLimit fee unit:SUN
    * @return TransactionExtention
    * @throws Exception if fail

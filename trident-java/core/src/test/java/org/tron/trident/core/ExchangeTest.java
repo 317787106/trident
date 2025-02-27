@@ -88,7 +88,7 @@ public class ExchangeTest extends BaseTest {
   void testExchangeTransaction() throws IllegalException, InterruptedException {
     //expected should be smaller than left value in that exchange.
     TransactionExtention transactionExtention = client.exchangeTransaction(testAddress, exchangeID,
-        "_", 20_000_000L, 10_000_000L);
+        "_", 20_000_000L, 1_000_000L);
 
     Transaction transaction = client.signTransaction(transactionExtention);
     String txId = client.broadcastTransaction(transaction);
