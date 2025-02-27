@@ -16,7 +16,6 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.tron.trident.abi.FunctionEncoder;
@@ -279,5 +278,15 @@ class ApiWrapperTest extends BaseTest {
 //    System.out.println("specified amount: " + amount2);
     assertTrue(amount1 >= 0);
     assertTrue(amount2 >= 0);
+  }
+
+  @Test
+  void testGetTransactionById() {
+    try {
+      client.getTransactionById(
+          "82e0b2120c7c8b4e3abe99723e9d9498e0b6c9a137ff761d43d0625914e11990");//nile
+    } catch (IllegalException e) {
+      assert false;
+    }
   }
 }
