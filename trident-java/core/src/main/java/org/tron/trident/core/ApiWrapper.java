@@ -1253,7 +1253,7 @@ public class ApiWrapper implements Api {
   @Override
   public TransactionInfoList getTransactionInfoByBlockNum(long blockNum) throws IllegalException {
     if (blockNum < 0) {
-      throw new IllegalException();
+      throw new IllegalException("blockNum must be >= 0");
     }
     NumberMessage numberMessage = NumberMessage.newBuilder().setNum(blockNum).build();
     return blockingStub.getTransactionInfoByBlockNum(numberMessage);
@@ -1846,6 +1846,9 @@ public class ApiWrapper implements Api {
   @Override
   public TransactionInfoList getTransactionInfoByBlockNumSolidity(long blockNum)
       throws IllegalException {
+    if (blockNum < 0) {
+      throw new IllegalException("blockNum must be >= 0");
+    }
     NumberMessage numberMessage = NumberMessage.newBuilder().setNum(blockNum).build();
     return blockingStubSolidity.getTransactionInfoByBlockNum(numberMessage);
   }
