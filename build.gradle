@@ -185,11 +185,14 @@ artifacts {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
 
-            groupId = "com.github.317787106"
+            groupId = "io.github.317787106"
             artifactId = 'trident'
             version = project.version
+
+            artifact tasks.named("buildLib")
+            artifact tasks.named("sourcesJar")
+            artifact tasks.named("javadocJar")
 
             pom {
                 name = 'trident'
