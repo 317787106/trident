@@ -185,10 +185,13 @@ artifacts {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            from components.java
 
             groupId = "io.github.317787106"
             artifactId = 'trident'
             version = project.version
+
+            artifacts.removeAll { it.file == tasks.jar.archiveFile.get().asFile }
 
             artifact tasks.named("buildLib")
             artifact tasks.named("sourcesJar")
