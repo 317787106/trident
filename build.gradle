@@ -187,7 +187,7 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
 
-            groupId = "io.github.317787106"
+            groupId = project.group
             artifactId = 'trident'
             version = project.version
 
@@ -201,12 +201,14 @@ publishing {
                 name = 'trident'
                 description = 'Java implementation of trident'
                 url = 'https://github.com/317787106/trident'
+
                 licenses {
                     license {
                         name = 'The Apache License, Version 2.0'
                         url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
+
                 developers {
                     developer {
                         name = 'jiangyuanshu'
@@ -217,12 +219,49 @@ publishing {
                         email = 'apple0xlee@gmail.com'
                     }
                 }
+
                 scm {
                     connection = 'scm:git:git://github.com/317787106/trident.git'
                     developerConnection = 'scm:git:ssh://github.com/317787106/trident.git'
                     url = 'https://github.com/317787106/trident'
                 }
 
+                // collect all dependencies of subprojects
+                withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+                    def seenDependencies = [] as Set
+                    subprojects.each { subproject ->
+                        {
+                            subproject.properties.configurations.implementation.allDependencies.each { dep ->
+                                {//println dep
+                                    if (dep.group != null && dep.name != null && dep.version != null && dep.group != artifactId) {
+                                        def dependencyIdentifier = "${dep.group}:${dep.name}:${dep.version}"
+                                        //drop duplicate
+                                        if (!seenDependencies.contains(dependencyIdentifier)) {
+                                            seenDependencies << dependencyIdentifier
+                                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                                            dependencyNode.appendNode('groupId', dep.group)
+                                            dependencyNode.appendNode('artifactId', dep.name)
+                                            dependencyNode.appendNode('version', dep.version)
+                                            //dependencyNode.appendNode('scope', 'runtime')
+
+                                            // for exclusions
+                                            if (dep.excludeRules.size() > 0) {
+                                                def exclusions = dependencyNode.appendNode('exclusions')
+                                                dep.excludeRules.each { ExcludeRule ex ->
+                                                    def exclusion = exclusions.appendNode('exclusion')
+                                                    exclusion.appendNode('groupId', ex.group)
+                                                    exclusion.appendNode('artifactId', ex.module)
+                                                }
+                                            }
+                                        }
+                                    }// end if
+                                }
+                            }
+                        }
+                    }
+                }
+                //end withXml
             }
         }
     }
