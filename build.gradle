@@ -181,3 +181,47 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId = project.group
+            artifactId = 'trident'
+            version = project.version
+
+            pom {
+                name = 'trident'
+                description = 'Java implementation of trident'
+                url = 'https://github.com/317787106/trident'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        name = 'jiangyuanshu'
+                        email = '317787106@qq.com'
+                    }
+                    developer {
+                        name = 'apple'
+                        email = 'apple0xlee@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/317787106/trident.git'
+                    developerConnection = 'scm:git:ssh://github.com/317787106/trident.git'
+                    url = 'https://github.com/317787106/trident'
+                }
+
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}
