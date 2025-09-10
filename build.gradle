@@ -187,7 +187,7 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
 
-            groupId = project.group
+            groupId = "com.github.317787106"
             artifactId = 'trident'
             version = project.version
 
